@@ -1,5 +1,7 @@
 class PostsController < ApplicationController
   before_action :set_post, only: [:show, :edit, :update, :destroy]
+  before_action :require_user, except: [:show,:index]
+  before_action :require_same_user, only: [:edit, :update]
 
   # GET /posts
   # GET /posts.json
@@ -43,6 +45,7 @@ class PostsController < ApplicationController
   # POST /posts.json
   def create
     @post = Post.new(post_params)
+    @post.user = current_user
 
     respond_to do |format|
       if @post.save
@@ -88,5 +91,20 @@ class PostsController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def post_params
       params.require(:post).permit(:title, :content)
+    end
+    
+    def require_same_user
+      if current_user != @post.user
+        flash[:danger] = "This site is free and open to everyone, but our registered users can create, edit and like post."
+        redirect_to root_path
+      end
+    end
+    
+
+    def require_user
+      if !logged_in?
+        flash[:danger] = "This site is free and open to everyone, but our registered users can create, edit and like post."
+        redirect_to root_path
+      end
     end
 end
