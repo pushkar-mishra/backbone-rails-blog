@@ -18,6 +18,12 @@ class Blog.Views.PostsNewView extends Backbone.View
     title = $('#title').val()
     content = $('#content').val()
     model = new Blog.Models.Post({title: title, content: content})
-    @collection.create model,success: (post) =>
-      @model = post
-      window.location.hash = "/#{@model.id}"
+    @collection.create model,
+      success: (post) =>
+        @model = post
+        window.location.hash = "/#{@model.id}"
+      error: (post) =>
+        alert("You must be logged in to create a post")
+        window.location.hash = "/"
+      wait: true
+        

@@ -19,7 +19,11 @@ class Blog.Views.PostsEditView extends Backbone.View
     e.stopPropagation()
     title = $('#title').val()
     content = $('#content').val()
-    @model.save({title: title, content: content},
-                success: (post) =>
-                    @model = post
-                    window.location.hash = "/#{@model.id}")
+    @model.save {title: title, content: content},
+      success: (post) =>
+        @model = post
+        window.location.hash = "/#{@model.id}"
+      error: (post, error) =>
+        alert("Failed to update.You can only edit your post.")
+        window.location.hash = "/"
+      wait: true
